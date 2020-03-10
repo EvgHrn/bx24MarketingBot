@@ -4,22 +4,35 @@
  * Module dependencies.
  */
 
-var app = require('../app');
-var debug = require('debug')('bx24marketingbot:server');
-var http = require('http');
+const app = require('../app');
+const debug = require('debug')('bxtest:server');
+const http = require('http');
+require("dotenv").config();
+const https = require('https');
+const fs = require('fs');
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+const port = normalizePort(process.env.PORT || '3333');
 app.set('port', port);
 
 /**
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+ let server;
+
+ if(process.env.MODE !== 'local') {
+  const options = {
+    key: fs.readFileSync(process.env.SSL_KEY_PATH),
+    cert: fs.readFileSync(process.env.SSL_CERT_PATH)
+  };
+  server = https.createServer(options, app);
+ } else {
+  server = http.createServer(app);
+ }
 
 /**
  * Listen on provided port, on all network interfaces.
