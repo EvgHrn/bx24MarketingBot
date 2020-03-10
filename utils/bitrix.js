@@ -101,7 +101,7 @@ class Bitrix {
       {
         BOT_ID: botId,
         COMMAND: "masssend",
-        COMMON: "Y",
+        COMMON: "N",
         HIDDEN: "N",
         EXTRANET_SUPPORT: "N",
         LANG: [
@@ -123,7 +123,7 @@ class Bitrix {
       {
         BOT_ID: botId,
         COMMAND: "addmarketinguser",
-        COMMON: "Y",
+        COMMON: "N",
         HIDDEN: "N",
         EXTRANET_SUPPORT: "N",
         LANG: [
@@ -145,7 +145,7 @@ class Bitrix {
       {
         BOT_ID: botId,
         COMMAND: "deletemarketinguser",
-        COMMON: "Y",
+        COMMON: "N",
         HIDDEN: "N",
         EXTRANET_SUPPORT: "N",
         LANG: [
