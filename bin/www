@@ -25,11 +25,14 @@ app.set('port', port);
  let server;
 
  if(process.env.MODE !== 'local') {
+     const keyPathStr = `${process.env.SSL_KEY_PATH}/private.key`;
+     const certPathStr = `${process.env.SSL_KEY_PATH}/cert.key`;
+     console.log("SSL options: ", keyPathStr, certPathStr);
   const options = {
-    key: fs.readFileSync(`${process.env.SSL_KEY_PATH}/private.key`),
-    cert: fs.readFileSync(`${process.env.SSL_CERT_PATH}/cert.crt`)
+    key: fs.readFileSync(keyPathStr),
+    cert: fs.readFileSync(certPathStr)
   };
-	console.log("SSL options: ", options);
+
   server = https.createServer(options, app);
  } else {
   server = http.createServer(app);
