@@ -122,7 +122,7 @@ class Bitrix {
       "imbot.command.register",
       {
         BOT_ID: botId,
-        COMMAND: "addsupportuser",
+        COMMAND: "addmarketinguser",
         COMMON: "Y",
         HIDDEN: "N",
         EXTRANET_SUPPORT: "N",
