@@ -68,7 +68,7 @@ class Db {
       console.log("New config successfully saved");
       return true;
     } catch (err) {
-      console.log("Saving config error");
+      console.log("Saving config error: ", err);
       return false;
     }
   };
