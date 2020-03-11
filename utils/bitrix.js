@@ -100,7 +100,7 @@ class Bitrix {
       "imbot.command.register",
       {
         BOT_ID: botId,
-        COMMAND: "masssend",
+        COMMAND: "рассылкамаркетинг",
         COMMON: "N",
         HIDDEN: "N",
         EXTRANET_SUPPORT: "N",

@@ -171,7 +171,7 @@ app.use(async (req, res, next) => {
         
         result = false;
         for (const command of req.body["data"]["COMMAND"]) {
-          if (command["COMMAND"] === "masssend") {
+          if (command["COMMAND"] === "рассылкамаркетинг") {
             const departmentToSearch = command["COMMAND_PARAMS"].match(
               /^.*(?=-)/gm,
             )[0];
