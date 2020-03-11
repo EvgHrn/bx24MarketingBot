@@ -109,9 +109,7 @@ app.use(async (req, res, next) => {
             );
             break;
           }
-          if (
-              !req.body["data"]["PARAMS"]["MESSAGE"].match(/(?<=id)\d*/gm)
-            ) {
+          if ( !req.body["data"]["PARAMS"]["MESSAGE"].match(/(?<=id)\d*/gm) ) {
             //Quotation error
             console.log(
               "Quotation error in: ",
@@ -122,6 +120,7 @@ app.use(async (req, res, next) => {
               `Ошибка цитаты`,
               req.body["auth"],
             );
+            break;
           }
           
           let eventMessage = req.body["data"]["PARAMS"]["MESSAGE"];
