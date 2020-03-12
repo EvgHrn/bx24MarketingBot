@@ -63,31 +63,27 @@ class Bitrix {
   };
 
   getFileUrl = async (fileId, auth) => {
-    //
     let count = 0;
-    const thisBitrix = this;
-    setTimeout(async function checkFileUploading() {
-      const isFullFile = await thisBitrix.isFileUploaded(fileId, auth);
-      if(isFullFile) {
-        console.log("File uploaded");
-        const result = await thisBitrix.restCommand(
-          "disk.file.get",
-          {
-            id: fileId
-          },
-          auth
-        );
-        return result["result"]["DOWNLOAD_URL"];
-      } else {
-        console.log("File do not uploaded yet");
-        if(count > 1000) {
-          return false;
-        } else {
-          count++;
-          setTimeout(checkFileUploading, 3000);
-        }
+    const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+    let isFullFile = false;
+    while(!isFullFile) {
+      console.log("File do not uploaded yet");
+      if(count > 1000) {
+        return false;
       }
-    }, 3000);
+      count++;
+      await sleep(3000);
+      isFullFile = await this.isFileUploaded(fileId, auth);
+    }
+    console.log("File uploaded");
+    const result = await this.restCommand(
+      "disk.file.get",
+      {
+        id: fileId
+      },
+      auth
+    );
+    return result["result"]["DOWNLOAD_URL"];
   };
 
   isFileUploaded = async (fileId, auth) => {

@@ -66,6 +66,7 @@ app.use(async (req, res, next) => {
               const fileId =  req.body["data"]["PARAMS"]["FILES"][filesKeys[i]]["id"];
               const fileUrl = await bitrix.getFileUrl(fileId,  req.body["auth"]);
               if(!fileUrl) {
+                console.log("File uploading error. File url: ", fileUrl);
                 filesError = true;
                 break;
               }
