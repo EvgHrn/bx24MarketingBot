@@ -91,10 +91,10 @@ app.use(async (req, res, next) => {
                         `Ошибка отправки файлов. Файлы не отправлены`,
                         req.body["auth"],
                     );
-                    break;
+                  } else {
+                    count++;
+                    setTimeout(checkFileUploading, 3000);
                   }
-                  count++;
-                  setTimeout(checkFileUploading, 3000);
                 }
               }, 3000);
             }
