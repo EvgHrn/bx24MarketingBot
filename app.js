@@ -55,6 +55,7 @@ app.use(async (req, res, next) => {
           //Message from common user
           console.log("Message from common user: ", eventMessage);
           let attach = [];
+          let filesError;
           if (req.body["data"]["PARAMS"]["FILES"]) {
             //Message has files
             console.log("There are files in message: ", req.body["data"]["PARAMS"]["FILES"]);
@@ -63,40 +64,31 @@ app.use(async (req, res, next) => {
             //Attach files
             for(let i = 0; i < filesKeys.length; i++) {
               const fileId =  req.body["data"]["PARAMS"]["FILES"][filesKeys[i]]["id"];
-              const fileUrl = await bitrix.getFileUrl( fileId,  req.body["auth"]);
+              const fileUrl = await bitrix.getFileUrl(fileId,  req.body["auth"]);
+              if(!fileUrl) {
+                filesError = true;
+                break;
+              }
               const fileName = req.body["data"]["PARAMS"]["FILES"][filesKeys[i]]["name"];
               const fileSize = req.body["data"]["PARAMS"]["FILES"][filesKeys[i]]["size"];
               console.log("File id: ", fileId);
               console.log("File url: ", fileUrl);
               console.log("File name: ", fileName);
               console.log("File size: ", fileSize);
-              let count = 0;
-              setTimeout(async function checkFileUploading() {
-                const isFullFile = await bitrix.isFileUploaded(fileId, req.body["auth"]);
-                if(isFullFile) {
-                  console.log("File uploaded");
-                  count = 0;
-                  attach.push({ FILE: {
-                          NAME: fileName,
-                          LINK: fileUrl,
-                          SIZE: fileSize,
-                        }
-                      }
-                  );
-                } else {
-                  console.log("File do not uploaded yet");
-                  if(count > 1000) {
-                    result = await bitrix.sendMessage(
-                        req.body["data"]["PARAMS"]["FROM_USER_ID"],
-                        `Ошибка отправки файлов. Файлы не отправлены`,
-                        req.body["auth"],
-                    );
-                  } else {
-                    count++;
-                    setTimeout(checkFileUploading, 3000);
-                  }
-                }
-              }, 3000);
+              attach.push({ FILE: {
+                  NAME: fileName,
+                  LINK: fileUrl,
+                  SIZE: fileSize,
+                }}
+              );
+            }
+            if(filesError) {
+              result = await bitrix.sendMessage(
+                  req.body["data"]["PARAMS"]["FROM_USER_ID"],
+                  `Ошибка отправки файлов. Файлы не отправлены`,
+                  req.body["auth"],
+              );
+              break;
             }
           }
           if (eventMessage === undefined) {

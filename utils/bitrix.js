@@ -63,14 +63,31 @@ class Bitrix {
   };
 
   getFileUrl = async (fileId, auth) => {
-    const result = await this.restCommand(
-      "disk.file.get",
-      {
-        id: fileId
-      },
-      auth
-    );
-    return result["result"]["DOWNLOAD_URL"];
+    //
+    let count = 0;
+    const thisBitrix = this;
+    setTimeout(async function checkFileUploading() {
+      const isFullFile = await thisBitrix.isFileUploaded(fileId, auth);
+      if(isFullFile) {
+        console.log("File uploaded");
+        const result = await thisBitrix.restCommand(
+          "disk.file.get",
+          {
+            id: fileId
+          },
+          auth
+        );
+        return result["result"]["DOWNLOAD_URL"];
+      } else {
+        console.log("File do not uploaded yet");
+        if(count > 1000) {
+          return false;
+        } else {
+          count++;
+          setTimeout(checkFileUploading, 3000);
+        }
+      }
+    }, 3000);
   };
 
   isFileUploaded = async (fileId, auth) => {
@@ -221,13 +238,13 @@ class Bitrix {
       ...params,
       auth: auth["access_token"]
     });
-    console.log("restCommand url: ", `${queryUrl}/?${queryData}`);
+    // console.log("restCommand url: ", `${queryUrl}/?${queryData}`);
 
     let result;
     try {
       const response = await fetch(`${queryUrl}/?${queryData}`);
       result = await response.json();
-      console.log("restCommand response: ", result);
+      // console.log("restCommand response: ", result);
     } catch (err) {
       console.log("restCommand fetch error: ", err);
       return false;
