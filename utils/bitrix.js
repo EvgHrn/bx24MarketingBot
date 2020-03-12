@@ -73,6 +73,17 @@ class Bitrix {
     return result["result"]["DOWNLOAD_URL"];
   };
 
+  isFileUploaded = async (fileId, auth) => {
+    const result = await this.restCommand(
+        "disk.file.getVersions",
+        {
+          id: fileId
+        },
+        auth
+    );
+    return result["result"].some((fileObj) => fileObj["GLOBAL_CONTENT_VERSION"] > 1);
+  }
+
   registerBotAndCommands = async (token, auth) => {
     let result = await this.restCommand(
       "imbot.register",

@@ -62,19 +62,41 @@ app.use(async (req, res, next) => {
             console.log("filesKeys: ", filesKeys);
             //Attach files
             for(let i = 0; i < filesKeys.length; i++) {
-              const fileUrl = await bitrix.getFileUrl( req.body["data"]["PARAMS"]["FILES"][filesKeys[i]]["id"],  req.body["auth"]);
+              const fileId =  req.body["data"]["PARAMS"]["FILES"][filesKeys[i]]["id"];
+              const fileUrl = await bitrix.getFileUrl( fileId,  req.body["auth"]);
               const fileName = req.body["data"]["PARAMS"]["FILES"][filesKeys[i]]["name"];
               const fileSize = req.body["data"]["PARAMS"]["FILES"][filesKeys[i]]["size"];
+              console.log("File id: ", fileId);
               console.log("File url: ", fileUrl);
               console.log("File name: ", fileName);
               console.log("File size: ", fileSize);
-              attach.push({ FILE: {
-                              NAME: fileName,
-                              LINK: fileUrl,
-                              SIZE: fileSize,
-                            }
-                          }   
-              );
+              let count = 0;
+              setTimeout(async function checkFileUploading() {
+                const isFullFile = await bitrix.isFileUploaded(fileId, req.body["auth"]);
+                if(isFullFile) {
+                  console.log("File uploaded");
+                  count = 0;
+                  attach.push({ FILE: {
+                          NAME: fileName,
+                          LINK: fileUrl,
+                          SIZE: fileSize,
+                        }
+                      }
+                  );
+                } else {
+                  console.log("File do not uploaded yet");
+                  if(count > 1000) {
+                    result = await bitrix.sendMessage(
+                        req.body["data"]["PARAMS"]["FROM_USER_ID"],
+                        `Ошибка отправки файлов. Файлы не отправлены`,
+                        req.body["auth"],
+                    );
+                    break;
+                  }
+                  count++;
+                  setTimeout(checkFileUploading, 3000);
+                }
+              }, 3000);
             }
           }
           if (eventMessage === undefined) {
